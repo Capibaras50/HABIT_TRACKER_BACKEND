@@ -1,13 +1,19 @@
-const express = require('express');
-const config = require('./config/config')
-const app = express();
+const config = require('./config/config');
+const createApp = require('./app');
+const { connectDb, createTables } = require('./config/db');
 
-app.use(express.json());
+(async () => {
+    try {
+        const res = await connectDb()
+        await createTables()
+        console.log(res)
+    } catch (err) {
+        console.error('Error al conectar con la base de datos', err)
+    }
+})();
 
-app.get('/health-check', (req, res) => {
-    res.json({ message: 'El servidor esta corriendo' })
-})
+const app = createApp();
 
 app.listen(config.port, () => {
-    console.log(`El servidor esta corriendo en el puerto ${config.port}`)
-});
+    console.log(`Aplicacion corriendo en el puerto ${config.port}`)
+})
