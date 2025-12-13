@@ -62,7 +62,8 @@ const createTables = async () => {
                 is_in_week BOOL NOT NULL,
                 user_id INT NOT NULL,
                 habit_created TIMESTAMP DEFAULT NOW(),
-                need_deep_work BOOL NOT NULL
+                need_deep_work BOOL NOT NULL,
+                deep_work_with_screen BOOL NOT NULL
             );
 
             CREATE TABLE IF NOT EXISTS Habits_Completed(

@@ -10,7 +10,7 @@ class Service {
             ...habitData,
             userId,
         }
-        const habitCreated = await pool.query('INSERT INTO Habits (name, importance, days, time, is_in_week, user_id, need_deep_work) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *', [habit.name, habit.importance, habit.days, habit.time, habit.isInWeek, habit.userId, habit.needDeepWork])
+        const habitCreated = await pool.query('INSERT INTO Habits (name, importance, days, time, is_in_week, user_id, need_deep_work, deep_work_with_screen) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *', [habit.name, habit.importance, habit.days, habit.time, habit.isInWeek, habit.userId, habit.needDeepWork, habit.deepWorkWithScreen])
         return { message: 'El habito se creo correctamente', habit: habitCreated.rows[0] }
     }
 

@@ -7,6 +7,7 @@ const createHabitSchema = joi.object({
     isInWeek: joi.bool().required(),
     days: joi.array().valid('Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo').required(),
     needDeepWork: joi.bool().required(),
+    deepWorkWithScreen: joi.bool().required(),
 })
 
 const updateHabitSchema = joi.object({
