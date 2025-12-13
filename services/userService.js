@@ -7,14 +7,41 @@ class UserService {
             const result = await pool.query('SELECT * FROM Users WHERE id = $1', [id])
             const user = result.rows[0]
 
-            if (!user) {
-                throw new ApiError('The user dont exist', 404)
+            if (result.rowCount === 0) {
+                throw new ApiError('El usuario no existe', 403)
             }
 
             return user
         } catch (err) {
             throw new ApiError(err.message, err.statusCode)
         }
+    }
+
+    async uploadImage(userId, linkImage) {
+        await this.getUser(userId)
+        await pool.query('UPDATE Users SET image_profile = $1 WHERE id = $2', [linkImage, userId])
+        return { message: 'La imagen se subio correctamente', linkImage }
+    }
+
+    async changeUser(userId, dataUser) {
+        await this.getUser(userId)
+        let contador = 1
+        const keys = Object.keys(dataUser)
+        const values = Object.values(dataUser)
+        let query = 'UPDATE Users SET '
+        for (let i = 0; i < keys.length; i++) {
+            if (keys.length - 1 === i) {
+                query = query + `${keys[i]} = $${contador} `
+            } else {
+                query = query + `${keys[i]} = $${contador}, `
+            }
+            contador++
+        }
+        query = query + `WHERE id = $${contador}`
+        const queryParams = values
+        queryParams.push(userId)
+        await pool.query(query, queryParams)
+        return { message: 'El perfil se actualizo correctamente' }
     }
 }
 

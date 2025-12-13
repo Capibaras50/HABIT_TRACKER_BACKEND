@@ -1,4 +1,3 @@
-const { pool } = require('../config/db')
 const AuthService = require('../services/authService')
 const Service = new AuthService()
 
@@ -23,6 +22,7 @@ const login = async (req, res, next) => {
 
         return res.json({ user: response.user })
     } catch (err) {
+        console.error(err)
         next(err)
     }
 }
@@ -102,6 +102,18 @@ const changePassword = async (req, res, next) => {
     }
 }
 
+const changeEmail = async (req, res, next) => {
+    try {
+        const { userId } = req.user
+        const { email } = req.body
+        const response = await Service.changeEmail(userId, email)
+        return res.clearCookie('access_token').clearCookie('refresh_token').json(response)
+    } catch (err) {
+        console.error(err)
+        next(err)
+    }
+}
+
 module.exports = {
     register,
     login,
@@ -109,5 +121,6 @@ module.exports = {
     logout,
     recovery,
     changePassword,
-    changePasswordRecovery
+    changePasswordRecovery,
+    changeEmail,
 }

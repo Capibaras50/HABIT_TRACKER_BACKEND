@@ -5,6 +5,8 @@ const ApiError = require('../utils/ApiError')
 const { pool } = require('../config/db')
 const { secretAccessToken, secretRefreshToken, emailEnterprise, passwordEmailEnterprise, hostEmailEnterprise, environment } = require('../config/config')
 const generateCode = require('../utils/generateCode')
+const UserService = require('./userService')
+const userService = new UserService()
 
 class AuthService {
     async createUser(userData) {
@@ -226,6 +228,13 @@ class AuthService {
         const hashPassword = await bcrypt.hash(newPassword, 10)
         await pool.query('UPDATE Auth SET password = $1 WHERE user_id = $2', [hashPassword, userId])
         return { message: 'La contrasena fue modificada correctamente' }
+    }
+
+    async changeEmail(userId, email) {
+        await userService.getUser(userId)
+        await pool.query('UPDATE Auth SET email = $1 WHERE user_id = $2', [email, userId])
+        await this.logout(userId)
+        return { message: 'Se actualizo el correo exitosamente, por favor vuelva a logearse' }
     }
 }
 

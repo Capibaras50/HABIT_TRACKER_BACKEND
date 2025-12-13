@@ -37,7 +37,7 @@ const createTables = async () => {
                 id SERIAL PRIMARY KEY,
                 name TEXT NOT NULL,
                 streak INT NOT NULL DEFAULT 0,
-                points INT NOT NULL DEFAULT 0
+                image_profile TEXT DEFAULT null
             );
 
             CREATE TABLE IF NOT EXISTS Auth(

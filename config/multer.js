@@ -1,6 +1,7 @@
 const multer = require('multer');
 const { CloudinaryStorage } = require('multer-storage-cloudinary')
-const cloudinary = require('./cloudinary')
+const cloudinary = require('./cloudinary');
+const ApiError = require('../utils/ApiError');
 
 const storage = new CloudinaryStorage({
     cloudinary,
@@ -9,4 +10,14 @@ const storage = new CloudinaryStorage({
     }
 })
 
-const upload = multer({ storage })
+const fileFilter = (req, file, cb) => {
+    const fileTypesAllowed = ['image/jpeg', 'image/png']
+    if (!fileTypesAllowed.includes(file.mimetype)) {
+        cb(new ApiError('El archivo no es valido', 400), false)
+    }
+    cb(null, true)
+}
+
+const upload = multer({ storage, fileFilter })
+
+module.exports = upload
