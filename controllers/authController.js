@@ -1,3 +1,4 @@
+const { pool } = require('../config/db')
 const AuthService = require('../services/authService')
 const Service = new AuthService()
 
@@ -70,9 +71,43 @@ const logout = async (req, res, next) => {
     }
 }
 
+const recovery = async (req, res, next) => {
+    try {
+        const { email } = req.body
+        const response = await Service.recovery(email)
+        return res.json(response)
+    } catch (err) {
+        next(err)
+    }
+}
+
+const changePasswordRecovery = async (req, res, next) => {
+    try {
+        const { code, newPassword } = req.body
+        const response = await Service.changePasswordRecovery(code, newPassword)
+        return res.json(response)
+    } catch (err) {
+        next(err)
+    }
+}
+
+const changePassword = async (req, res, next) => {
+    try {
+        const { userId } = req.user
+        const { oldPassword, newPassword } = req.body
+        const response = await Service.changePassword(userId, oldPassword, newPassword)
+        return res.json(response)
+    } catch (err) {
+        next(err)
+    }
+}
+
 module.exports = {
     register,
     login,
     refreshToken,
     logout,
+    recovery,
+    changePassword,
+    changePasswordRecovery
 }
