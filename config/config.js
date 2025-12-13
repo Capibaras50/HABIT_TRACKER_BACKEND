@@ -13,6 +13,9 @@ const config = {
     passwordEmailEnterprise: process.env.PASSWORD_EMAIL_ENTERPRISE,
     hostEmailEnterprise: process.env.HOST_EMAIL_ENTERPRISE,
     environment: process.env.ENVIRONMENT,
+    cloudName: process.env.CLOUD_NAME,
+    cloudApiKey: process.env.CLOUD_API_KEY,
+    cloudApiSecret: process.env.CLOUD_API_SECRET,
 }
 
 module.exports = config
