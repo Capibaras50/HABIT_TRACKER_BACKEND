@@ -70,7 +70,7 @@ const createTables = async () => {
                 habit_id INT NOT NULL REFERENCES Habits(id) ON DELETE CASCADE,
                 date_completed TIMESTAMP NOT NULL DEFAULT NOW(),
                 day_completed days_week NOT NULL,
-                difficulty TEXT NOT NULL
+                difficulty INT NOT NULL
             );
 
             CREATE TABLE IF NOT EXISTS Habits_Cancelled(
@@ -79,7 +79,8 @@ const createTables = async () => {
                 date_cancelled TIMESTAMP NOT NULL DEFAULT NOW(),
                 cancel_reason TEXT NOT NULL,
                 focus_percent INT,
-                mental_health_percent INT
+                mental_health_percent INT,
+                difficulty INT NOT NULL
             );
 
             CREATE TABLE IF NOT EXISTS Deep_Work(
@@ -89,7 +90,8 @@ const createTables = async () => {
                 time INT NOT NULL,
                 quality_percent INT NOT NULL,
                 cancelled BOOL NOT NULL,
-                reason_cancelled TEXT
+                reason_cancelled TEXT,
+                difficulty INT NOT NULL
             );
         `)
 

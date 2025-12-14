@@ -34,6 +34,7 @@ class Service {
     }
 
     async updateHabit(userId, id, changesData) {
+        changesData.days = JSON.stringify(changesData.days)
         await userService.getUser(userId)
         const habit = await this.getHabit(userId, id)
         let contador = 1
@@ -62,6 +63,38 @@ class Service {
         await this.getHabit(userId, habitId)
         await pool.query('DELETE FROM Habits WHERE id = $1 AND user_id = $2', [habitId, userId])
         return { message: 'El habito se borro con exito', id: habitId }
+    }
+
+    async completeHabit(userId, id, completeData) {
+        await userService.getUser(userId)
+        const habit = await this.getHabit(userId, id)
+        const daysHabit = habit.days
+        if (!daysHabit.includes(completeData.dayCompleted)) {
+            throw new ApiError('Hoy no tienes que hacer este habito', 400)
+        }
+        const resultHabitsCompleted = await pool.query(`
+            SELECT *
+            FROM Habits_Completed 
+            INNER JOIN Habits 
+                ON Habits_Completed.habit_id = Habits.id 
+            WHERE Habits_Completed.habit_id = $1 
+                AND Habits.user_id = $2 
+                AND CAST(date_completed as DATE) = CAST(NOW() as DATE)`, [id, userId])
+
+        if (resultHabitsCompleted.rowCount > 0) {
+            throw new ApiError('Este habito ya se completo hoy', 400)
+        }
+        await pool.query('INSERT INTO Habits_Completed (habit_id, day_completed, difficulty) VALUES ($1, $2, $3)', [id, completeData.dayCompleted, completeData.difficulty])
+        return { message: 'Habito completado exitosamente' }
+    }
+
+    async cancelHabit(userId, id, cancelData) {
+        await userService.getUser(userId)
+        await this.getHabit(userId, id)
+        if (!cancelData.focusPercent) cancelData.focusPercent = null
+        if (!cancelData.mentalHealthPercent) cancelData.mentalHealthPercent = null
+        await pool.query('INSERT INTO Habits_Cancelled (habit_id, cancel_reason, focus_percent, mental_health_percent, difficulty) VALUES ($1, $2, $3, $4, $5)', [id, cancelData.cancelReason, cancelData.focusPercent, cancelData.mentalHealthPercent, cancelData.difficulty])
+        return { message: "El habito se cancelo exitosamente" }
     }
 }
 

@@ -57,10 +57,37 @@ const updateHabit = async (req, res, next) => {
     }
 }
 
+const completeHabit = async (req, res, next) => {
+    try {
+        const { userId } = req.user
+        const { id } = req.params
+        const completeData = req.body
+        const response = await Service.completeHabit(userId, id, completeData)
+        return res.json(response)
+    } catch (err) {
+        console.error(err)
+        next(err)
+    }
+}
+
+const cancelHabit = async (req, res, next) => {
+    try {
+        const { userId } = req.user
+        const { id } = req.params
+        const cancelData = req.body
+        const response = await Service.cancelHabit(userId, id, cancelData)
+        return res.json(response)
+    } catch (err) {
+        next(err)
+    }
+}
+
 module.exports = {
     createHabit,
     getHabits,
     getHabit,
     deleteHabit,
     updateHabit,
+    completeHabit,
+    cancelHabit
 }
