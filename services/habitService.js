@@ -10,7 +10,7 @@ class Service {
             ...habitData,
             userId,
         }
-        const habitCreated = await pool.query('INSERT INTO Habits (name, importance, days, time, is_in_week, user_id, need_deep_work, deep_work_with_screen) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *', [habit.name, habit.importance, habit.days, habit.time, habit.isInWeek, habit.userId, habit.needDeepWork, habit.deepWorkWithScreen])
+        const habitCreated = await pool.query('INSERT INTO Habits (name, importance, days, time, is_in_week, user_id, need_deep_work, deep_work_with_screen) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *', [habit.name, habit.importance, JSON.stringify(habit.days), habit.time, habit.isInWeek, habit.userId, habit.needDeepWork, habit.deepWorkWithScreen])
         return { message: 'El habito se creo correctamente', habit: habitCreated.rows[0] }
     }
 
@@ -33,10 +33,28 @@ class Service {
         return habit
     }
 
-    async updateHabit(userId, changesData) {
+    async updateHabit(userId, id, changesData) {
         await userService.getUser(userId)
-        const habit = await this.getHabit(userId, changesData.id)
-        return habit
+        const habit = await this.getHabit(userId, id)
+        let contador = 1
+        const keys = Object.keys(changesData)
+        const values = Object.values(changesData)
+        let query = 'UPDATE Habits SET '
+        for (let i = 0; i < keys.length; i++) {
+            const actualKey = keys[i].split(/(?=[A-Z])/)
+            const joinKey = actualKey.join('_').toLowerCase()
+            if (keys.length - 1 === i) {
+                query = query + `${joinKey} = $${contador} `
+            } else {
+                query = query + `${joinKey} = $${contador}, `
+            }
+            contador++
+        }
+        query = query + `WHERE id = $${contador}`
+        const queryParams = values
+        queryParams.push(id)
+        await pool.query(query, queryParams)
+        return { message: "El habito se actualizo correctamente" }
     }
 
     async deleteHabit(userId, habitId) {

@@ -8,6 +8,7 @@ const createHabit = async (req, res, next) => {
         const response = await Service.createHabit(userId, habit)
         return res.status(201).json(response)
     } catch (err) {
+        console.error(err)
         next(err)
     }
 }
@@ -44,9 +45,22 @@ const deleteHabit = async (req, res, next) => {
     }
 }
 
+const updateHabit = async (req, res, next) => {
+    try {
+        const { userId } = req.user
+        const { id } = req.params
+        const changesData = req.body
+        const response = await Service.updateHabit(userId, id, changesData)
+        return res.json(response)
+    } catch (err) {
+        next(err)
+    }
+}
+
 module.exports = {
     createHabit,
     getHabits,
     getHabit,
     deleteHabit,
+    updateHabit,
 }

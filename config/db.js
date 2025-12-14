@@ -32,10 +32,9 @@ const connectDb = async () => {
 
 const createTables = async () => {
     try {
+        // CREATE TYPE habit_importance AS ENUM('Alta', 'Media', 'Baja');
+        // CREATE TYPE days_week AS ENUM('Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo');
         const res = await pool.query(`
-            CREATE TYPE habit_importance AS ENUM('Alta', 'Media', 'Baja');
-            CREATE TYPE days_week AS ENUM('Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo');
-
             CREATE TABLE IF NOT EXISTS Users(
                 id SERIAL PRIMARY KEY,
                 name TEXT NOT NULL,
@@ -84,7 +83,7 @@ const createTables = async () => {
             );
 
             CREATE TABLE IF NOT EXISTS Deep_Work(
-                id SERIAL PRIMARY KEY
+                id SERIAL PRIMARY KEY,
                 habit_id INT REFERENCES Habits(id) ON DELETE CASCADE,
                 user_id INT NOT NULL REFERENCES Users(id) ON DELETE CASCADE,
                 time INT NOT NULL,
@@ -96,6 +95,7 @@ const createTables = async () => {
 
         console.log('TABLAS CREADAS EXITOSAMENTE')
     } catch (err) {
+        console.error(err)
         throw new ApiError('Error al crear las tablas de la db', 500)
     }
 }
