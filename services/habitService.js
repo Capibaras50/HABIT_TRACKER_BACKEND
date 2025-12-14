@@ -65,6 +65,10 @@ class Service {
         return { message: 'El habito se borro con exito', id: habitId }
     }
 
+    async hasUserCompletedAllImportantHabits(userId) {
+
+    }
+
     async completeHabit(userId, id, completeData) {
         await userService.getUser(userId)
         const habit = await this.getHabit(userId, id)

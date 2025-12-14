@@ -39,7 +39,9 @@ const createTables = async () => {
                 id SERIAL PRIMARY KEY,
                 name TEXT NOT NULL,
                 streak INT NOT NULL DEFAULT 0,
-                image_profile TEXT DEFAULT null
+                date_increased_streak TIMESTAMP DEFAULT NULL,
+                image_profile TEXT DEFAULT null,
+                user_created TIMESTAMP NOT NULL DEFAULT NOW()
             );
 
             CREATE TABLE IF NOT EXISTS Auth(

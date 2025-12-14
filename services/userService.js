@@ -43,6 +43,14 @@ class UserService {
         await pool.query(query, queryParams)
         return { message: 'El perfil se actualizo correctamente' }
     }
+
+    async increaseStreakUser(userId) {
+        const user = await this.getUser(userId)
+        const newStreak = user.streak + 1
+        const now = new Date().getUTCDate()
+        const userUpdated = await pool.query('UPDATE Users SET streak = $1, date_increased_streak = $2 WHERE id = $3 RETURNING *', [newStreak, now, userId])
+        return userUpdated.streak
+    }
 }
 
 module.exports = UserService
