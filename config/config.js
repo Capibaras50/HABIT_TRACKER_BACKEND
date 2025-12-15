@@ -16,6 +16,7 @@ const config = {
     cloudName: process.env.CLOUD_NAME,
     cloudApiKey: process.env.CLOUD_API_KEY,
     cloudApiSecret: process.env.CLOUD_API_SECRET,
+    colombiaOffset: process.env.COLOMBIA_OFFSET,
 }
 
 module.exports = config

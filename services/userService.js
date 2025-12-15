@@ -1,5 +1,6 @@
 const { pool } = require("../config/db")
 const ApiError = require("../utils/ApiError")
+const { colombiaOffset } = require('../config/config')
 
 class UserService {
     async getUser(id) {
@@ -44,10 +45,22 @@ class UserService {
         return { message: 'El perfil se actualizo correctamente' }
     }
 
+    getLocalDate(date, offsetMinutes) {
+        const localTime = new Date(date.getTime() + offsetMinutes * 60000)
+        return localTime.toISOString().slice(0, 10)
+    }
+
     async increaseStreakUser(userId) {
         const user = await this.getUser(userId)
+        const dateStreak = new Date(user.date_increased_streak)
+        const dateNow = new Date()
+        const streakDay = this.getLocalDate(dateStreak, colombiaOffset)
+        const today = this.getLocalDate(dateNow, colombiaOffset)
+        if (streakDay === today) {
+            return { message: 'Ya se actualizo la racha hoy' }
+        }
         const newStreak = user.streak + 1
-        const now = new Date().getUTCDate()
+        const now = new Date().toISOString()
         const userUpdated = await pool.query('UPDATE Users SET streak = $1, date_increased_streak = $2 WHERE id = $3 RETURNING *', [newStreak, now, userId])
         return userUpdated.streak
     }

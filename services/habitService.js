@@ -66,7 +66,28 @@ class Service {
     }
 
     async hasUserCompletedAllImportantHabits(userId) {
-
+        await userService.getUser(userId)
+        const resultImportantHabits = await pool.query(`
+            SELECT * 
+            FROM Habits 
+            WHERE importance = 'Alta' AND user_id = $1;`, [userId]
+        )
+        const resultImportantHabitsCompleted = await pool.query(`
+            SELECT * 
+            FROM Habits_Completed 
+            INNER JOIN Habits 
+                ON Habits_Completed.habit_id = Habits.id 
+            WHERE CAST(Habits_Completed.date_completed as DATE) = CAST(NOW() as DATE) 
+            AND Habits.importance = 'Alta' 
+            AND Habits.user_id = $1;`, [userId]
+        )
+        if (resultImportantHabits.rowCount === 0) {
+            return false
+        }
+        if (resultImportantHabits.rowCount !== resultImportantHabitsCompleted.rowCount) {
+            return false
+        }
+        return true
     }
 
     async completeHabit(userId, id, completeData) {
@@ -89,6 +110,10 @@ class Service {
             throw new ApiError('Este habito ya se completo hoy', 400)
         }
         await pool.query('INSERT INTO Habits_Completed (habit_id, day_completed, difficulty) VALUES ($1, $2, $3)', [id, completeData.dayCompleted, completeData.difficulty])
+        const shouldIncreaseStreak = await this.hasUserCompletedAllImportantHabits(userId)
+        if (shouldIncreaseStreak) {
+            await userService.increaseStreakUser(userId)
+        }
         return { message: 'Habito completado exitosamente' }
     }
 

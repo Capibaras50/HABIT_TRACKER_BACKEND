@@ -69,8 +69,8 @@ class AuthService {
         if (!foundUser) {
             throw new ApiError('El usuario no esta autenticado', 401)
         }
-        const accessToken = jwt.sign({ id: foundUser.user_id, email: foundUser.email, name: user.name }, secretAccessToken, { expiresIn: '1h' })
-        const newRefreshToken = jwt.sign({ id: foundUser.user_id, email: foundUser.email, name: user.name }, secretRefreshToken, { expiresIn: '7d' })
+        const accessToken = jwt.sign({ userId: foundUser.user_id, email: foundUser.email, name: user.name }, secretAccessToken, { expiresIn: '1h' })
+        const newRefreshToken = jwt.sign({ userId: foundUser.user_id, email: foundUser.email, name: user.name }, secretRefreshToken, { expiresIn: '7d' })
         await pool.query('UPDATE Auth SET refresh_token = $1 WHERE id = $2', [newRefreshToken, foundUser.user_id])
         return { accessToken, newRefreshToken }
     }
