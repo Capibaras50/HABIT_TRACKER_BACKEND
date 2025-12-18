@@ -34,6 +34,9 @@ const createTables = async () => {
     try {
         // CREATE TYPE habit_importance AS ENUM('Alta', 'Media', 'Baja');
         // CREATE TYPE days_week AS ENUM('Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo');
+        // CREATE TABLE IF NOT EXISTS Health_Mental(
+        //     id SERIAL PRIMARY KEY
+        // );
         const res = await pool.query(`
             CREATE TABLE IF NOT EXISTS Users(
                 id SERIAL PRIMARY KEY,
@@ -89,11 +92,27 @@ const createTables = async () => {
                 id SERIAL PRIMARY KEY,
                 habit_id INT REFERENCES Habits(id) ON DELETE CASCADE,
                 user_id INT NOT NULL REFERENCES Users(id) ON DELETE CASCADE,
-                time INT NOT NULL,
-                quality_percent INT NOT NULL,
+                start_time TIMESTAMP NOT NULL,
+                end_time TIMESTAMP NOT NULL,
+                estimated_time INT NOT NULL,
+                focus_score NUMERIC(6,4) NOT NULL,
                 cancelled BOOL NOT NULL,
                 reason_cancelled TEXT,
-                difficulty INT NOT NULL
+                difficulty INT NOT NULL,
+                productive_time INT NOT NULL,
+                distractions JSONB NOT NULL
+            );
+
+            CREATE TABLE IF NOT EXISTS Focus(
+                id SERIAL PRIMARY KEY,
+                user_id INT NOT NULL,
+                date DATE NOT NULL,
+                total_time INT NOT NULL,
+                productive_time INT NOT NULL,
+                distractions_count INT NOT NULL,
+                focus_percentage NUMERIC(6,4),
+                mood_score INT NOT NULL,
+                notes TEXT
             );
         `)
 

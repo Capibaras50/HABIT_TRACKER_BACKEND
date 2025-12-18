@@ -16,9 +16,11 @@ const createHabit = async (req, res, next) => {
 const getHabits = async (req, res, next) => {
     try {
         const { userId } = req.user
-        const response = await Service.getHabits(userId)
+        const queryParams = req.query
+        const response = await Service.getHabits(userId, queryParams)
         return res.json(response)
     } catch (err) {
+        console.log(err)
         next(err)
     }
 }

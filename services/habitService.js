@@ -14,9 +14,16 @@ class Service {
         return { message: 'El habito se creo correctamente', habit: habitCreated.rows[0] }
     }
 
-    async getHabits(userId) {
+    async getHabits(userId, queryParams) {
+        let limit = 10
+        let offset = 0
+        if (queryParams.page) {
+            limit = 10 * Number(queryParams.page)
+            offset = 10 * (Number(queryParams.page) - 1)
+        }
+
         await userService.getUser(userId)
-        const resultHabits = await pool.query('SELECT * FROM Habits WHERE user_id = $1', [userId])
+        const resultHabits = await pool.query('SELECT * FROM Habits WHERE user_id = $1 LIMIT $2 OFFSET $3', [userId, limit, offset])
         if (resultHabits.rowCount === 0) {
             throw new ApiError('No se encontraron habitos', 403)
         }
