@@ -55,6 +55,7 @@ const updateHabit = async (req, res, next) => {
         const response = await Service.updateHabit(userId, id, changesData)
         return res.json(response)
     } catch (err) {
+        console.error(err)
         next(err)
     }
 }

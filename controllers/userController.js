@@ -18,6 +18,7 @@ const uploadImage = async (req, res, next) => {
         const response = await Service.uploadImage(userId, linkImage)
         return res.json(response)
     } catch (err) {
+        console.error(err)
         next(err)
     }
 }
@@ -29,7 +30,6 @@ const uploadProfile = async (req, res, next) => {
         const response = await Service.changeUser(userId, data)
         return res.json(response)
     } catch (err) {
-        console.error(err)
         next(err)
     }
 }

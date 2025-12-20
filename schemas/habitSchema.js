@@ -18,7 +18,7 @@ const updateHabitSchema = joi.object({
     name: joi.string().max(30).min(1),
     importance: joi.string().valid('Alta', 'Media', 'Baja'),
     time: joi.number().max(480),
-    isInWeek: joi.bool(),
+    isInWeek: joi.bool().required(),
     days: joi.when('isInWeek', {
         is: true,
         then: joi.array().items(joi.string().valid('Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes')),

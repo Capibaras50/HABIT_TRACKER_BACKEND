@@ -1,7 +1,7 @@
 const joi = require('joi')
 
 const distractionAppSchema = joi.object({
-    time: joi.number().integer().min(1).required(),
+    time: joi.number().positive().min(0).required(),
     switches: joi.number().integer().min(0).required(),
     urls: joi.array().items(joi.string().domain()).optional()
 })
@@ -16,7 +16,7 @@ const deepWorkSchema = joi.object({
     productiveTime: joi.number().min(1).max(480).required(),
     distractions: joi.object({
         apps: joi.object().pattern(joi.string().min(1), distractionAppSchema).min(1).required(),   // nombre dinámico de la app
-        totalDistractionTime: joi.number().integer().min(1).required(),
+        totalDistractionTime: joi.number().positive().min(1).required(),
         totalSwitches: joi.number().integer().min(0).required()
     }).required(),
 })
